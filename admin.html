@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>紅狐後台管理</title>
+  <link rel="stylesheet" href="/public/styles/style.css" />
+</head>
+<body>
+  <h1>🔧 後台管理</h1>
+
+  <!-- 登入區 -->
+  <input type="password" id="adminPass" placeholder="輸入密碼" />
+  <button onclick="login()">登入</button>
+
+  <!-- 後台內容 -->
+  <div id="adminPanel" class="hidden">
+   
+
+    <h2>🎁 獎品剩餘數量</h2>
+    <ul id="prizeList"></ul>
+
+    <p id="totalRemaining" style="font-weight: bold; font-size: 1.1rem;">
+  ⏳ 剩餘總抽數：<span id="remainingCount">載入中...</span>
+      <h2>🎫 加值抽獎券</h2>
+<input type="text" id="adminName" placeholder="輸入顧客姓名" />
+<input type="number" id="ticketCount" placeholder="加值券數" />
+<button onclick="addTickets()">新增抽獎券</button>
+
+    
+    <h2>🎫 使用者券數總覽</h2>
+<table>
+  <thead>
+    <tr><th>姓名</th><th>剩餘券數</th><th>操作</th></tr>
+  </thead>
+  <tbody id="userTable"></tbody>
+</table>
+
+<script>
+function addTickets() {
+  const name = document.getElementById("adminName").value.trim();
+  const count = parseInt(document.getElementById("ticketCount").value);
+
+  if (!name || isNaN(count) || count <= 0) {
+    alert("請輸入有效的姓名與券數");
+    return;
+  }
+
+  fetch("/api/addTickets", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, count })
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+    })
+    .catch(err => {
+      console.error("加值失敗", err);
+      alert("加值失敗，請稍後再試");
+    });
+}
+</script>
+
+    </p>
+ <button onclick="resetPrizes()">🔄 重置獎池</button>
+    <h2>📜 抽獎紀錄</h2>
+    <button onclick="exportCSV()">匯出 CSV</button>
+    <ul id="recordList"></ul>
+  </div>
+
+  <script src="/public/scripts/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,746 @@
+/* ——— 全域：頁面與字體設定 ——— */
+body {
+  font-family: 'Noto Sans TC', sans-serif;           /* 全站字體 */
+  background: linear-gradient(135deg, #fff0f0, #ffeaea); /* 背景漸層 */
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ——— 扭蛋機容器（整體最大寬度） ——— */
+.gacha-container {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* ——— 主要卡片 & 彈窗 & 玻璃效果區塊 ——— */
+.gacha-card, .popup, .glass {
+  background: rgba(255, 255, 255, 0.25);  /* 半透明白底 */
+  border-radius: 16px;                   /* 圓角 */
+  padding: 1.5rem;                       /* 內距 */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);/* 立體陰影 */
+  backdrop-filter: blur(10px);           /* 玻璃模糊效果 */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 1.5rem;                 /* 區塊間距 */
+}
+
+/* ——— 主標題 ——— */
+h1 {
+  color: #d33;           /* 紅色標題 */
+  margin-bottom: 0.5rem;
+}
+
+/* ——— 中獎彈窗的二級標題（避免太長跑版） ——— */
+#resultPopup h2 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ——— 價格或價值文字 ——— */
+.price {
+  font-weight: bold;
+  color: #444;        /* 深灰色 */
+  margin-bottom: 1rem;
+}
+
+/* ——— 所有主要按鈕（含抽獎按鈕、查詢等） ——— */
+button {
+  width: 100%;           /* 撐滿父容器 */
+  padding: 0.8rem;       /* 內距 */
+  background: #ff4d4d;   /* 主按鈕紅底 */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+/* ——— 按鈕滑鼠移入效果 ——— */
+button:hover {
+  background: #e63946;   /* 深一點的紅 */
+}
+
+/* ——— 提示文字（小字提醒，如條款） ——— */
+.reminder {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+/* ——— 彈窗內的圖片（獎品縮圖） ——— */
+.popup img {
+  width: 100px;         /* 固定寬度 */
+  margin: 1rem 0;       /* 上下間距 */
+}
+
+/* ——— 分享按鈕（獨立小按鈕，通常不撐滿寬度） ——— */
+.share-buttons button {
+  margin: 0.3rem;
+  background: #f77f7f;  /* 分享專用配色 */
+}
+
+/* ——— 通用隱藏工具類 —— 用於隱藏彈窗或遮罩 ——— */
+.hidden {
+  display: none;
+}
+
+/* ——— 頁尾容器 ——— */
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-bottom: 3rem;
+  white-space: nowrap;  /* 不換行 */
+}
+
+/* ——— 頁尾超連結（IG/賣貨便） ——— */
+footer a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #d33;          /* 與標題同紅色系 */
+}
+
+/* ——— 機台區塊（扭蛋機所在區域） ——— */
+.machine-area {
+  position: relative;   /* 內部定位參考 */
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: center;
+}
+/* ——— 扭蛋球顯示動畫：彈出並彈跳效果 ——— */
+.capsule img {
+  width: 80px;
+  animation: pop-bounce 1.2s ease forwards;
+}
+
+/* ——— pop-bounce 動畫定義（扭蛋球縮放 & 移動 & 透明度） ——— */
+@keyframes pop-bounce {
+  0% {
+    transform: scale(0.3) translateY(50px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1) translateY(-20px);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0.95) translateY(10px);
+  }
+  100% {
+    transform: scale(1) translateY(0px);
+  }
+}
+
+/* ——— 輸入群組容器：姓名輸入框 & 查詢按鈕巢狀 ——— */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1.5rem auto;
+  max-width: 320px;
+}
+
+/* ——— 輸入欄位：姓名輸入框樣式 ——— */
+.input-group input {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+/* ——— 扭蛋機主區域：定位 & 置中顯示 ——— */
+.machine-wrapper {
+  position: relative;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 500px; /* 根據機台圖高度可調整 */
+}
+
+/* ——— 扭蛋機圖片：尺寸 & 置中 ——— */
+.gacha-machine {
+  width: 100%;
+  max-width: 500px; /* 機台圖片最大寬度 */
+  display: block;
+  margin: 0 auto;
+}
+
+/* ——— 熱區（hotspot）：抽獎按鈕覆蓋區，置中 & 禁止 pointer-events 底層圖阻擋 ——— */
+hotspot {
+  position: absolute; 
+  left: 50%;
+  bottom: -60px;     /* 放在機台下方 */
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* 只讓按鈕接收點擊 */
+}
+
+/* ——— 獎品清單容器：縱向列表 & 間距 ——— */
+#rateTable {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  opacity: 0;                /* 預設隱藏時淡出 */
+  transition: opacity 0.3s ease;
+}
+#rateTable:not(.hidden) {
+  opacity: 1;                /* 顯示時淡入 */
+}
+
+/* ——— 單一獎品條目：圖片＋文字橫向排列 ——— */
+.prize-entry {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #fdfdfd;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* ——— 獎品縮圖：固定尺寸 & 圓角 ——— */
+.prize-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* ——— 獎品文字區：名稱、剩餘數量、等級徽章等 ——— */
+.prize-text {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ——— 剩餘數量文字 ——— */
+.prize-left {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* ——— 稀有獎品：邊框 & 背景凸顯 ——— */
+.rare {
+  border: 2px solid #ff4d4f;
+  background: #fff5f5;
+}
+
+/* ——— 稀有徽章：顯示等級 & 價值 ——— */
+.rare-badge {
+  color: #ff4d4f;
+  font-weight: bold;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+/* ——— 表單包裹區：用於包住機台、輸入、按鈕… ——— */
+.form-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+
+/* ——— 切換剩餘獎品按鈕：間距設定 ——— */
+#toggleRate {
+  margin-top: 6rem;
+  margin-bottom: 1rem;
+}
+
+/* ——— 獎品清單外層包裹：最大寬度 & 置中 ——— */
+.rate-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 1.5rem auto;
+}
+
+/* ——— 獎品清單切換區：隱藏/顯示 & 佈局 ——— */
+.rate-toggle {
+  margin-top: 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.rate-toggle.hidden {
+  display: none;
+}
+/* ——— 主抽籤按鈕 (#drawBtn) ——— */
+#drawBtn {
+  background: linear-gradient(to bottom, #ff6b6b, #c0392b);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 6px #a93226;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+/* 抽籤按鈕滑鼠懸停 */
+#drawBtn:hover {
+  background: linear-gradient(to bottom, #ff4d4d, #b02a1f);
+  box-shadow: 0 4px #922b21;
+}
+/* 抽籤按鈕按下時 */
+#drawBtn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px #922b21;
+}
+
+/* ——— 3D 樣式抽籤按鈕 (.gacha-3d-btn) ——— */
+.gacha-3d-btn {
+  pointer-events: auto; /* 僅按鈕可接收點擊 */
+  background: linear-gradient(to bottom, #ff6b6b, #c0392b);
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 6px #a93226;
+  transition: all 0.2s ease;
+  width: 250px;
+  height: 60px;
+  cursor: pointer;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.gacha-3d-btn:hover {
+  background: linear-gradient(to bottom, #ff4d4d, #b02a1f);
+  box-shadow: 0 4px #922b21;
+}
+.gacha-3d-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px #922b21;
+}
+
+/* ——— 扭蛋球掉落並旋轉動畫 (spin-fall) ——— */
+@keyframes spin-fall {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(0.3) rotate(0deg);
+    opacity: 0;
+  }
+  40% {
+    transform: translateX(-50%) translateY(100px) scale(0.6) rotate(360deg);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(-50%) translateY(180px) scale(0.9) rotate(720deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(240px) scale(1) rotate(1080deg);
+  }
+}
+
+/* ——— 扭蛋出口錨點 (純定位，不顯示) ——— */
+.exit-anchor {
+  position: absolute;
+  bottom: 6.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+}
+
+/* ——— 膠囊扭蛋初始狀態 (隱藏 & 縮放) ——— */
+.capsule {
+  position: absolute;
+  left: 50%;
+  bottom: 27%; /* 出口位置 */
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  z-index: 5;
+}
+
+/* ——— 膠囊瞬間彈出並旋轉動畫 (spin-pop) ——— */
+@keyframes spin-pop {
+  0% {
+    transform: translateX(-50%) scale(0.3) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1) rotate(360deg);
+    opacity: 1;
+  }
+}
+/* 顯示膠囊時觸發 spin-fall 動畫 */
+.capsule.show {
+  animation: spin-fall 1.6s ease-out forwards;
+}
+
+/* ——— Footer 圖示大小 (.footer-icon) ——— */
+.footer-icon {
+  width: 100px;
+  height: 100px;
+  vertical-align: middle;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+
+/* ——— 機台 Logo (.logo-on-machine) ——— */
+.logo-on-machine {
+  position: absolute;
+  top: 14%;
+  left: 48%;
+  transform: translateX(-50%);
+  width: 120px; /* 按實際 logo 大小微調 */
+  z-index: 4;
+}
+
+/* ——— 通用彈窗樣式 (.popup) ——— */
+.popup {
+  position: fixed;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+/* 關閉按鈕樣式 (.popup-close) */
+.popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: #ffebeb;
+  border: 1px solid #ff4d4f;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #d33;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.popup-close:hover {
+  background: #ffe0e0;
+  transform: scale(1.1);
+}
+
+/* ——— 獎品清單 & 查詢紀錄列表 (li + img) ——— */
+#prizeList img,
+#recordList img {
+  width: 80px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 0.5rem;
+}
+#prizeList li,
+#recordList li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* ——— 中獎彈窗獎品圖片 & 名稱 (#prizeImage, #prizeName) ——— */
+#prizeImage {
+  width: 160px;
+  max-width: 80%;
+  display: block;
+  margin: 1rem auto;
+}
+#prizeName {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #d33;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* ——— 機器震動動畫 (shake) ——— */
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 2px); }
+  50% { transform: translate(3px, -2px); }
+  75% { transform: translate(-2px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+.machine-wrapper.shake {
+  animation: shake 0.8s ease;
+}
+
+/* ——— 扭蛋堆疊區 (.capsule-hill) & 扭蛋球 (.capsule-ball) ——— */
+.capsule-hill {
+  position: absolute;
+  top: 22%;        /* 根據機台圖片微調 */
+  left: 42%;
+  transform: translateX(-50%);
+  width: 300px;
+  height: 330px;
+  pointer-events: none;
+  z-index: 3;
+}
+.capsule-ball {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background-image: url("https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/扭蛋?v=1751100237426"); /* 扭蛋球圖 */
+  background-size: cover;
+  background-position: center;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 4;
+  transition: transform 0.3s ease;
+  animation: capsuleWiggle 2.5s ease-in-out infinite;
+}
+
+/* ——— 扭蛋球上下顫動 (capsuleWiggle) ——— */
+@keyframes capsuleWiggle {
+  0%   { transform: translateY(0) rotate(0deg); }
+  25%  { transform: translateY(-2px) rotate(-1.5deg); }
+  50%  { transform: translateY(1px) rotate(1.5deg); }
+  75%  { transform: translateY(-1px) rotate(-1deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+/* ——— 扭蛋球左右搖擺 (shakeSideways) ——— */
+@keyframes shakeSideways {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-6px); }
+  50%  { transform: translateX(6px); }
+  75%  { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+/* 持續左右搖動：shake-x class 用於刮球 */
+.capsule-ball.shake-x {
+  animation: shakeSideways 0.6s ease;
+}
+
+/* ——— 中獎結果彈窗 (#resultPopup) ——— */
+#resultPopup {
+  width: 90vw;
+  max-width: 480px;
+  font-size: 1.2rem;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  text-align: center;
+}
+/* 顯示品牌文字 */
+.brand-text {
+  margin-top: 12px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #c0392b;
+}
+
+/* ——— 左上券數提示 (.ticket-counter) ——— */
+.ticket-counter {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  background: white;
+  color: #c0392b;
+  border: 2px solid #c0392b;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 999;
+}
+/* 無券時禁用狀態 */
+#drawBtn.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* ——— 稀有等級徽章前置符號 (.tier::before) ——— */
+.tier::before {
+  content: "🏆 ";
+  font-size: 1.2em;
+}
+
+/* ——— 稀有徽章樣式 (.rare-badge.tier) ——— */
+.rare-badge.tier {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px dashed #d35400;
+  background: #fffaf0;
+  color: #d35400;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.rare-badge.tier .value {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* ——— 閃光特效遮罩 (.flash-overlay) ——— */
+.flash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 80%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 1.5s ease-in-out;
+}
+.flash-overlay.show {
+  opacity: 1;
+  animation: softFlash 2.2s ease-in-out forwards;
+}
+/* 閃光動畫 */
+@keyframes softFlash {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ——— 已售完條目樣式 (.prize-entry.soldout) ——— */
+.prize-entry.soldout {
+  opacity: 0.5;
+  filter: grayscale(100%);
+  position: relative;
+}
+.prize-entry.soldout::after {
+  content: "已抽完";
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  z-index: 2;
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+/* ——— 獎品說明彈窗 (#descPopup) ——— */
+#descPopup.popup {
+  max-width: 640px;
+  width: 90vw;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: white;
+  border: 2px solid #ccc;
+  color: #333;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+/* ——— 獎品名稱連結效果 (.prize-name) ——— */
+.prize-name {
+  color: #0077cc; /* 藍色連結感 */
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+.prize-name:hover {
+  color: #005299;
+}
+
+/* ——— 券數為 0 時閃爍效果 (.ticket-counter.no-ticket) ——— */
+.ticket-counter.no-ticket {
+  background-color: #ffe6e6;
+  color: #c0392b;
+  animation: blink 1s infinite;
+}
+/* 閃爍動畫 */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 480px;
+  margin-bottom: 2rem;
+}
+th, td {
+  border-bottom: 1px solid #ddd;
+  padding: 0.6rem 1rem;
+  text-align: left;
+}
+button.add-one {
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.info-box {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  left: auto;
+  background: white;
+  color: #d35400;
+  border: 2px solid #d35400;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  z-index: 1000;
+}
+.info-box:hover {
+  background: #fff4e3;
+}
+.info-popup {
+  background: white !important;
+  border: 2px solid #ccc !important;
+  backdrop-filter: none !important;
+  color: #333;
+}
+@media (max-width: 768px) {
+  .info-popup {
+    width: 95vw;
+    max-width: none;
+    max-height: 95vh;
+    height: auto;
+    padding: 1.5rem;
+    border-radius: 12px;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+}
+.info-popup p,
+.info-popup ul,
+.info-popup li {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+

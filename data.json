@@ -1,0 +1,98 @@
+{
+  "prizes": [
+    {
+      "name": "天圓地方桌上植物燈",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/345025.jpg?v=1751299051337",
+      "quantity": 0,
+      "tier": "一等獎",
+      "value": 750,
+      "description": ""
+    },
+    {
+      "name": "鈴鐺型植物燈",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/S__35217435.jpg?v=1751043311751",
+      "quantity": 1,
+      "tier": "二等獎",
+      "value": 700,
+      "description": ""
+    },
+    {
+      "name": "三圓型桌上植物燈",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/345025.jpg?v=1751299051337",
+      "quantity": 0,
+      "tier": "三等獎",
+      "value": 760,
+      "description": ""
+    },
+    {
+      "name": "20瓦植物補光燈",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/S__35217436.jpg?v=1751042625863",
+      "quantity": 1,
+      "tier": "四等獎",
+      "value": 600,
+      "description": ""
+    },
+    {
+      "name": "10瓦植物補光燈",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/S__35217436.jpg?v=1751042625863",
+      "quantity": 1,
+      "tier": "五等獎",
+      "value": 400,
+      "description": ""
+    },
+    {
+      "name": "200元折價卷",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/200?v=1751110967286",
+      "quantity": 15,
+      "description": "可於紅狐官網滿NT$500時折抵NT$200，滿NT$1000可使用兩張，以此類推。使用期限為 7 天內。"
+    },
+    {
+      "name": "150元折價卷",
+      "image": "https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/150?v=1751110970529",
+      "quantity": 22,
+      "description": "可於紅狐官網滿NT$500時折抵NT$150，滿NT$1000可使用兩張，以此類推。使用期限為 7 天內。"
+    }
+  ],
+  "records": [
+    {
+      "name": "1",
+      "prize": "200元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "三圓型桌上植物燈"
+    },
+    {
+      "name": "1",
+      "prize": "200元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "150元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "200元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "200元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "天圓地方桌上植物燈"
+    },
+    {
+      "name": "1",
+      "prize": "150元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "200元折價卷"
+    },
+    {
+      "name": "1",
+      "prize": "150元折價卷"
+    }
+  ]
+}

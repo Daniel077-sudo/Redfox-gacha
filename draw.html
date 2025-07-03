@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>紅狐扭蛋機</title>
+    <link rel="stylesheet" href="/public/styles/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  </head>
+  <div id="flashOverlay" class="flash-overlay hidden"></div>
+  <div id="descPopup" class="popup hidden">
+    <button class="popup-close" onclick="closeDescPopup()">✖</button>
+    <h3 id="descTitle"></h3>
+    <p id="descContent"></p>
+  </div>
+
+  <body>
+    <div id="ticketCounter" class="ticket-counter">🎫 剩餘抽獎券：--</div>
+    <div
+      id="infoBtn"
+      class="ticket-counter info-box"
+      title="點此查看說明與查詢紀錄"
+    >
+      📘 活動說明
+    </div>
+
+    <div class="form-wrapper">
+      <div class="input-group">
+        <input type="text" id="username" placeholder="請輸入姓名" />
+      </div>
+
+      <!-- 扭蛋機 + 點擊區域 -->
+      <div class="machine-wrapper">
+        <!-- 🖼️ 扭蛋機圖 -->
+        <div class="capsule-container">
+          <div class="capsule-hill">
+            <!-- 扭蛋球稍後由 JS 插入 -->
+          </div>
+        </div>
+
+        <img
+          src="https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/S__35282990-Photoroom.png?v=1751111550101"
+          alt="扭蛋機"
+          class="gacha-machine"
+        />
+        <!-- 🔺 Logo 放在機台中上方 -->
+        <img
+          src="https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/LOGO?v=1751087808412"
+          alt="Logo"
+          class="logo-on-machine"
+        />
+
+        <!-- ⛳ 出口定位點（純錨點，不會顯示） -->
+        <div class="exit-anchor"></div>
+
+        <!-- 🥚 扭蛋球 -->
+        <div id="capsule" class="capsule hidden">
+          <img
+            src="https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/扭蛋?v=1751100237426"
+            alt="扭蛋球"
+          />
+        </div>
+
+        <!-- 🎯 抽獎按鈕（覆蓋 hotspot） -->
+        <div class="hotspot">
+          <button id="drawBtn" class="gacha-3d-btn">100元一抽</button>
+        </div>
+      </div>
+      <!-- 抽中獎品區塊 -->
+      <div id="resultPopup" class="popup hidden">
+        <button class="popup-close" onclick="closePopup()">✖</button>
+        <p class="brand-text">紅狐扭蛋機</p>
+        <!-- ⬅️ 加這行品牌文字 -->
+        <h2>🎉 恭喜中獎！</h2>
+        <img id="prizeImage" src="" alt="獎品圖片" />
+        <p id="prizeName"></p>
+
+        <div class="share-buttons">
+          <button onclick="capturePrizePopup()">分享中獎畫面</button>
+        </div>
+      </div>
+
+      <!-- 剩餘獎品清單 -->
+      <div class="rate-toggle hidden" id="rateSection">
+        <div id="rateTable"></div>
+        <div
+          id="totalAvailable"
+          style="
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+          "
+        >
+          🎫 剩餘可抽次數：<span id="availableCount">載入中...</span>
+        </div>
+      </div>
+      <button id="toggleRate">🎁 查看剩餘獎品</button>
+
+      <!-- footer -->
+      <footer>
+        <a href="https://www.instagram.com/redfox2_light/" target="_blank">
+          <img
+            src="https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/pngtree-instagram-icon-instagram-logo-png-image_3584852.png?v=1751111785740"
+            alt="Instagram"
+            class="footer-icon"
+          />
+          Instagram
+        </a>
+        <a href="https://campsite.bio/redfox_light" target="_blank">
+          <img
+            src="https://cdn.glitch.global/7e58d7f9-0317-4506-a9c2-9149ff8fbc8d/unnamed.jpg?v=1751113193991"
+            alt="賣貨便"
+            class="footer-icon"
+          />
+          賣貨便
+        </a>
+      </footer>
+    </div>
+
+    <div id="infoPopup" class="popup info-popup hidden">
+      <div class="popup-close" onclick="closeInfoPopup()">✕</div>
+      <h2 style="text-align: center">📘 活動說明</h2>
+      <p style="line-height: 1.6; font-size: 1rem">
+        每抽消耗 1 張抽獎券。<br />
+        點擊查看剩餘獎品->獎項名稱->商品說明。 <br /><br />
+        若要查詢個人紀錄，可點下方按鈕！
+      </p>
+      <div style="text-align: center; margin-top: 1.2rem">
+        <button
+          onclick="queryUserRecord()"
+          style="
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+            background: #f77f7f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+          "
+        >
+          🔍 查詢我的紀錄
+        </button>
+      </div>
+    </div>
+
+    <script src="/public/scripts/script.js"></script>
+  </body>
+</html>
