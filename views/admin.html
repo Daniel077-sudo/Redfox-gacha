@@ -14,13 +14,12 @@
 
   <!-- 後台內容 -->
   <div id="adminPanel" class="hidden">
-   
-
     <h2>🎁 獎品剩餘數量</h2>
     <ul id="prizeList"></ul>
-
     <p id="totalRemaining" style="font-weight: bold; font-size: 1.1rem;">
   ⏳ 剩餘總抽數：<span id="remainingCount">載入中...</span>
+
+  </p>
       <h2>🎫 加值抽獎券</h2>
 <input type="text" id="adminName" placeholder="輸入顧客姓名" />
 <input type="number" id="ticketCount" placeholder="加值券數" />
@@ -35,31 +34,6 @@
   <tbody id="userTable"></tbody>
 </table>
 
-<script>
-function addTickets() {
-  const name = document.getElementById("adminName").value.trim();
-  const count = parseInt(document.getElementById("ticketCount").value);
-
-  if (!name || isNaN(count) || count <= 0) {
-    alert("請輸入有效的姓名與券數");
-    return;
-  }
-
-  fetch("/api/addTickets", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, count })
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-    })
-    .catch(err => {
-      console.error("加值失敗", err);
-      alert("加值失敗，請稍後再試");
-    });
-}
-</script>
 
     </p>
  <button onclick="resetPrizes()">🔄 重置獎池</button>
@@ -68,6 +42,6 @@ function addTickets() {
     <ul id="recordList"></ul>
   </div>
 
-  <script src="/public/scripts/admin.js"></script>
+  <script type="module" src="/public/scripts/admin.js"></script>
 </body>
 </html>

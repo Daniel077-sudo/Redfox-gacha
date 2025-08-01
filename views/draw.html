@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
   <head>
+<script type="module" src="../public/scripts/firebaseInit.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>紅狐扭蛋機</title>
@@ -64,7 +65,7 @@
 
         <!-- 🎯 抽獎按鈕（覆蓋 hotspot） -->
         <div class="hotspot">
-          <button id="drawBtn" class="gacha-3d-btn">100元一抽</button>
+          <button id="drawBtn" class="gacha-3d-btn">抽一抽</button>
         </div>
       </div>
       <!-- 抽中獎品區塊 -->
@@ -93,7 +94,7 @@
             margin-top: 1rem;
           "
         >
-          🎫 剩餘可抽次數：<span id="availableCount">載入中...</span>
+          🎫 剩餘可抽次數：<span id="remainingCount">載入中...</span>
         </div>
       </div>
       <button id="toggleRate">🎁 查看剩餘獎品</button>
@@ -144,7 +145,6 @@
         </button>
       </div>
     </div>
-
-    <script src="/public/scripts/script.js"></script>
+   <script type="module" src="../public/scripts/script.js"></script>
   </body>
 </html>

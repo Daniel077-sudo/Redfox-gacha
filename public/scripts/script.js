@@ -1,26 +1,53 @@
+window.addEventListener("firebaseReady", () => {
+  fetchPrizeDataDirectly(); // ✅ 一初始化就執行
+});
+import { initFirebase } from "./firebaseInit.js";
+window.db = initFirebase(); // 👈 關鍵一步：建立全域 db
+
 let hasRenderedPrizeList = false;
+// utils.js 或 script.js 頂部
+function normalizePrizes(prizes) {
+  return Object.entries(prizes || {}).map(([key, value]) => ({
+    name: key,
+    ...value,
+    value: Number(value.value || 0) // 確保是 Number
+    
+  }));
+}
+
+
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 function updateTicketCounter(name) {
-  fetch(`/api/userTickets?name=${encodeURIComponent(name)}`)
-    .then(res => res.json())
-    .then(data => {
-      const remaining = data.tickets;
+  const db = window.db;
+   if (!db) {
+    console.warn("⚠️ Firebase 尚未初始化");
+    return;
+  }
+
+ const targetRef = ref(db, `data/users/${name}/tickets`);
+  console.log("🕵️ 嘗試讀取路徑：", targetRef.toString());
+
+  get(targetRef)
+    .then(snapshot => {
+      const remaining = snapshot.val();
+      userTicketMap[name] = remaining; // ✅ 加這行！
       const counter = document.getElementById("ticketCounter");
       const drawBtn = document.getElementById("drawBtn");
 
       counter.textContent = `🎫 剩餘抽獎券：${remaining}`;
-      drawBtn.disabled = remaining <= 0;
-      drawBtn.classList.toggle("disabled", remaining <= 0);
+  
 
-      // ✅ 額外提示：券數為 0 時變紅色閃爍
       if (remaining <= 0) {
         counter.classList.add("no-ticket");
       } else {
         counter.classList.remove("no-ticket");
       }
+    })
+    .catch(err => {
+      console.warn("❌ 無法載入票券數：", err);
     });
 }
-
 document.getElementById("username").addEventListener("blur", () => {
   const name = document.getElementById("username").value.trim();
   if (name) updateTicketCounter(name);
@@ -28,70 +55,106 @@ document.getElementById("username").addEventListener("blur", () => {
 
 let userTicketMap = {}; // { name: ticketCount }，你可以在前端手動設定或後端送過來
 
+function fetchPrizeDataDirectly() {
+  const db = window.db;
+  const path = "data/prizes";
+
+  if (!db) {
+    console.warn("⚠️ Firebase 尚未初始化，跳過資料讀取");
+    return;
+  }
+
+  try {
+    const prizeRef = ref(db, path); // ← 這行才需要 try/catch
+    get(prizeRef)
+      .then(snapshot => {
+        const prizeObj = snapshot.val();
+        window.prizeCache = prizeObj || {};
+        const prizeArray = normalizePrizes(prizeObj);
+        renderPrizeList(prizeArray);
+      })
+      .catch(err => {
+        console.error("❌ 無法從 Firebase 取得獎品資料", err);
+        const prizeArray = normalizePrizes({});
+        window.prizeCache = {};
+        renderPrizeList(prizeArray);
+      });
+  } catch (e) {
+    console.error("🔥 建立 ref 時失敗：", e);
+    window.prizeCache = {};
+    renderPrizeList(normalizePrizes({}));
+  }
+}
+
 document.getElementById("toggleRate").addEventListener("click", () => {
   const section = document.getElementById("rateSection");
   section.classList.toggle("hidden");
 
   if (!section.classList.contains("hidden")) {
-    renderPrizeList();
+    const prizeObj = window.prizeCache;
+    const prizeArray = normalizePrizes(window.prizeCache);;
+
+    renderPrizeList(prizeArray);
+
     setTimeout(() => {
       section.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   }
 });
 
-function renderPrizeList() {
-  fetch("/prizes")
-    .then(res => res.json())
-    .then(prizes => {
-      const table = document.getElementById("rateTable");
-      table.innerHTML = "";
 
-      prizes.forEach(p => {
-        // after prizes.forEach(...) 加上：
-const totalRemaining = prizes.reduce((sum, p) => sum + p.quantity, 0);
-document.getElementById("availableCount").textContent = totalRemaining;
+function renderPrizeList(prizes) {
+  const table = document.getElementById("rateTable");
+  table.innerHTML = "";
 
-        const isSoldOut = p.quantity <= 0;
-        const hasTier = p.tier;
+  // prizes 可能是陣列（API 傳來）或物件（Firebase 傳來）
+  const prizeArray = Array.isArray(prizes)
+    ? prizes
+    : Object.values(prizes); // 轉成陣列以便統一操作
+prizeArray.sort((a, b) => b.value - a.value); // 🔥 依價值排序
 
-        const item = document.createElement("div");
-        item.className = "prize-entry";
-        if (hasTier) item.classList.add("rare");
-        if (isSoldOut) item.classList.add("soldout");
+  const totalRemaining = prizeArray.reduce((sum, p) => sum + p.remainingCount, 0);
+  document.getElementById("remainingCount").textContent = totalRemaining;
 
-        // 👇 建立內容區塊（點名稱可查看說明）
-        item.innerHTML = `
-          <img src="${p.image}" alt="${p.name}" class="prize-img" />
-          <div class="prize-text">
-            <span class="prize-name" onclick="showDescription('${p.name}')">
-              ${p.name}
-            </span>
-            <span class="prize-left">
-              ${isSoldOut ? "❌ 已抽完" : `剩餘：${p.quantity}`}
-            </span>
-            ${hasTier ? `
-              <span class="rare-badge tier">
-                ${p.tier} 💎<br>
-                <span class="value">價值：${p.value || "--"} 元</span>
-              </span>` : ""}
-          </div>
-        `;
+  prizeArray.forEach((p) => {
+    const isSoldOut = p.remainingCount <= 0;
+    const hasTier = p.tier;
 
-        table.appendChild(item);
-      });
-    });
+    const item = document.createElement("div");
+    item.className = "prize-entry";
+    if (hasTier) item.classList.add("rare");
+    if (isSoldOut) item.classList.add("soldout");
+
+    item.innerHTML = `
+      <img src="${p.image}" alt="${p.name}" class="prize-img" />
+      <div class="prize-text">
+        <span class="prize-name" onclick="showDescription('${p.name}')">
+          ${p.name}
+        </span>
+        <span class="prize-left">
+          ${isSoldOut ? "❌ 已抽完" : `剩餘：${p.remainingCount}`}
+        </span>
+        ${hasTier ? `
+          <span class="rare-badge tier">
+            ${p.tier} 💎<br>
+            <span class="value">價值：${p.value || "--"} 元</span>
+          </span>` : ""}
+      </div>
+    `;
+    table.appendChild(item);
+  });
 }
-
-
 document.getElementById("drawBtn").addEventListener("click", () => {
   // ✅ 檢查按鈕是否被禁用（沒券）
+   const name = document.getElementById("username").value.trim();
+  console.log("使用者姓名：", name);
+  console.log("Ticket count (前端想像值):", userTicketMap[name]); // 如果你有前端快取的話
+
   if (document.getElementById("drawBtn").disabled) {
     alert("⚠️ 你目前沒有抽獎券囉，請先加值！");
     return;
   }
 
-  const name = document.getElementById("username").value.trim();
   if (!name) {
     alert("⚠️ 請先填寫【姓名】才可抽獎！");
     return;
@@ -100,14 +163,16 @@ document.getElementById("drawBtn").addEventListener("click", () => {
   shakeMachine();
   animateCapsulesShakeX();
 
-  fetch("/draw", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name }),
-  })
+  fetch("http://localhost:3000/draw", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name })
+})
+
     .then((res) => res.json())
     .then((data) => {
   if (data.success) {
+    updateTicketCounter(name);
     if (data.prize.tier) {
       showFlashEffect();
       launchParticles();
@@ -137,6 +202,9 @@ document.getElementById("drawBtn").addEventListener("click", () => {
       capsule.classList.remove("show");
       capsule.classList.add("hidden");
     }, 1200);
+    updateTicketCounter(name); // ← 再次從 Firebase 拉票券數
+    fetchPrizeDataDirectly(); // ← 重新渲染獎品列表
+
   } else {
     alert(data.message);
   }
@@ -155,9 +223,9 @@ window.addEventListener("DOMContentLoaded", () => {
   if (name) updateTicketCounter(name);
 });
 
-function closePopup() {
+window.closePopup = function () {
   document.getElementById("resultPopup").classList.add("hidden");
-}
+};
 
 function createCapsuleHillLayout() {
   const hill = document.querySelector(".capsule-hill");
@@ -238,44 +306,61 @@ function launchParticles() {
     ticks: 200,
   });
 }
-function showDescription(prizeName) {
-  fetch("/prizes")
-    .then(res => res.json())
-    .then(prizes => {
-      const prize = prizes.find(p => p.name === prizeName);
-      if (!prize) return;
+window.showDescription = function (prizeName) {
+  const prizeObj = window.prizeCache || {};
+  const prizeArray = normalizePrizes(window.prizeCache);
+  const prize = prizeArray.find(p => p.name === prizeName);
+  if (!prize) return;
 
-      document.getElementById("descTitle").textContent = prize.name;
-      document.getElementById("descContent").textContent = prize.description || "尚未提供使用說明。";
-      document.getElementById("descPopup").classList.remove("hidden");
-    });
+  document.getElementById("descTitle").textContent = prize.name;
+  document.getElementById("descContent").textContent = prize.description || "尚未提供使用說明。";
+  document.getElementById("descPopup").classList.remove("hidden");
 }
 
-function closeDescPopup() {
+window.closeDescPopup = function () {
   document.getElementById("descPopup").classList.add("hidden");
-}
+};
+
 document.getElementById("infoBtn").addEventListener("click", () => {
   document.getElementById("infoPopup").classList.remove("hidden");
 });
 
-function closeInfoPopup() {
+window.closeInfoPopup = function () {
   document.getElementById("infoPopup").classList.add("hidden");
-}
+};
 
-function queryUserRecord() {
+
+window.queryUserRecord = async function () {
   const name = prompt("請輸入姓名以查詢紀錄");
   if (!name) return;
 
-  fetch("/records")
-    .then(res => res.json())
-    .then(records => {
-      const userRecords = records.filter(r => r.name === name);
-      if (userRecords.length === 0) {
-        alert("查無紀錄");
-        return;
-      }
+  const db = window.db; 
+  const recordsRef = ref(db, "data/records");
 
-      const list = userRecords.map(r => `🎁 ${r.prize}（代碼：${r.code}）`).join("\n");
-      alert(`【${name}】的抽獎紀錄：\n\n${list}`);
-    });
-}
+  try {
+    const snapshot = await get(recordsRef);
+    const recordsObj = snapshot.val();
+    if (!recordsObj) {
+      alert("目前沒有任何抽獎紀錄");
+      return;
+    }
+
+   // 抓取對應使用者 ID（例如 '1'）底下的所有紀錄
+    const userRecordGroup = recordsObj[name];
+
+    if (!userRecordGroup) {
+      alert(`查無【${name}】的紀錄`);
+      return;
+    }
+const userRecords = Object.values(userRecordGroup).sort((a, b) => b.timestamp - a.timestamp);
+
+    const list = userRecords
+      .map(r => `🎁 ${r.prize}（代碼：${r.code}）`)
+      .join("\n");
+
+    alert(`【${name}】的抽獎紀錄：\n\n${list}`);
+  } catch (err) {
+    console.error("❌ 讀取紀錄失敗：", err);
+    alert("讀取失敗，請稍後再試");
+  }
+};

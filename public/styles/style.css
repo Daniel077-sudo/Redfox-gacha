@@ -743,4 +743,10 @@ button.add-one {
   font-size: 1rem;
   line-height: 1.6;
 }
-
+.prize-wrapper {
+  background: #fff;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
