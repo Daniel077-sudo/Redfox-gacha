@@ -174,8 +174,7 @@ audio.play().catch(err => {
 if (navigator.vibrate) {
   navigator.vibrate([300, 100, 300]); // 可以自訂節奏
 }
-const API_BASE = location.origin; // ← 自動抓當前域名
-  fetch(`${API_BASE}/draw`, {
+fetch("https://redfox-gacha.onrender.com/draw", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ name })
