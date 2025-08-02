@@ -163,6 +163,18 @@ document.getElementById("drawBtn").addEventListener("click", () => {
   shakeMachine();
   animateCapsulesShakeX();
 
+      // 🔊 播放抽獎音效
+const audio = document.getElementById("lotterySound");
+audio.currentTime = 0; // 從頭播放
+audio.play().catch(err => {
+  console.warn("音樂播放失敗：", err);
+});
+
+// 📳 震動效果（行動裝置）
+if (navigator.vibrate) {
+  navigator.vibrate([300, 100, 300]); // 可以自訂節奏
+}
+
   fetch("http://localhost:3000/draw", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
@@ -197,6 +209,9 @@ document.getElementById("drawBtn").addEventListener("click", () => {
     setTimeout(() => {
       document.getElementById("prizeImage").src = data.prize.image;
       document.getElementById("prizeName").textContent = data.prize.name;
+
+       // 👇 新增提示領獎文字
+  document.getElementById("prizeNotice").textContent = "🎁 請私訊我們中獎畫面，領取獎品喔！";
       document.getElementById("resultPopup").classList.remove("hidden");
 
       capsule.classList.remove("show");
@@ -264,7 +279,7 @@ function animateCapsulesShakeX() {
 }
 
 
-function capturePrizePopup() {
+window.capturePrizePopup = function() {
   const popup = document.getElementById("resultPopup");
   html2canvas(popup, {
     backgroundColor: "#ffffff",

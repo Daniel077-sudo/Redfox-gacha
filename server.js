@@ -24,6 +24,9 @@ app.use(cors({
   allowedHeaders: ["Content-Type"]
 }));
 
+// ✅ 放在這裡，這樣所有靜態資源都能被存取
+app.use(express.static("public"));
+
 app.use(express.json());
 app.use("/public", express.static("public"));
 app.use("/views", express.static("views"));

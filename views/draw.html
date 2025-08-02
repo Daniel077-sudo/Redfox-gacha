@@ -30,6 +30,10 @@
       <div class="input-group">
         <input type="text" id="username" placeholder="請輸入姓名" />
       </div>
+      
+<audio id="lotterySound">
+  <source src="audio/lottery.mp3" type="audio/mpeg">
+</audio>
 
       <!-- 扭蛋機 + 點擊區域 -->
       <div class="machine-wrapper">
@@ -76,7 +80,7 @@
         <h2>🎉 恭喜中獎！</h2>
         <img id="prizeImage" src="" alt="獎品圖片" />
         <p id="prizeName"></p>
-
+<p id="prizeNotice" class="notice-text"></p> <!-- ← 就是這段 -->
         <div class="share-buttons">
           <button onclick="capturePrizePopup()">分享中獎畫面</button>
         </div>
