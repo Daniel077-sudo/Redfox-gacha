@@ -174,8 +174,8 @@ audio.play().catch(err => {
 if (navigator.vibrate) {
   navigator.vibrate([300, 100, 300]); // 可以自訂節奏
 }
-
-  fetch("http://localhost:3000/draw", {
+const API_BASE = location.origin; // ← 自動抓當前域名
+  fetch(`${API_BASE}/draw`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ name })
